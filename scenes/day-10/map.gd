@@ -59,7 +59,8 @@ func _draw():
 
 	var keys = pipe_path.keys()
 
-	var window_size = get_viewport().get_visible_rect().size[1]
+	var size = get_viewport().get_visible_rect().size
+	var window_size = [size.x, size.y].min()
 #	window_size = window_size[window_size.min_axis_index()]
 
 	var max_map_size = 0
