@@ -1,6 +1,6 @@
 # Advent of Godot 2023
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/771554f5-3946-4a70-9a4e-94fc4307523b/deploy-status)](https://app.netlify.com/sites/advent-of-godot-2023/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/80d61a7a-c980-484a-a6c3-725b2cef105a/deploy-status)](https://app.netlify.com/sites/advent-of-godot-2023/deploys)
 
 ## TODO
 
