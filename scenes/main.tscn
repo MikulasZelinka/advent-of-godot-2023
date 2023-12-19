@@ -1,18 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://cn6xsn0ux77dd"]
+[gd_scene load_steps=3 format=3 uid="uid://w3ga0lumgw22"]
 
-[ext_resource type="PackedScene" uid="uid://b8f62f13cas13" path="res://scenes/SpriteShader/sprite_shader.tscn" id="1_gk1l1"]
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_04h7p"]
+[ext_resource type="Script" path="res://scenes/main_menu.gd" id="2_apwm0"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_04h7p")
 
-[node name="SpriteShader" parent="." instance=ExtResource("1_gk1l1")]
+[node name="MainMenu" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_apwm0")
 
-[node name="Label" type="Label" parent="."]
-offset_left = 319.0
-offset_top = 562.0
-offset_right = 806.0
-offset_bottom = 611.0
-text = "You should see the sprite distort if shaders are working.
-
-Click (and optionally hold) or use the arrow keys to move the sprite.
-"
-horizontal_alignment = 1
+[node name="Scenes" type="Node2D" parent="."]
+unique_name_in_owner = true

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://jsaqxrg4b7vd"]
+
+[ext_resource type="Script" path="res://scenes/day-10/map_select.gd" id="1_pgljg"]
+
+[node name="MapSelect" type="OptionButton"]
+offset_left = 960.0
+offset_top = 25.0
+offset_right = 1129.0
+offset_bottom = 50.0
+script = ExtResource("1_pgljg")
+
+[connection signal="item_selected" from="." to="." method="_on_item_selected"]
