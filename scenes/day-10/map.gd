@@ -34,6 +34,11 @@ var point_vectors: Array[Vector2] = []
 var tween: Tween = null
 
 
+
+func _on_animation_speed_slider_value_changed(value:float) -> void:
+	if tween != null:
+		tween.set_speed_scale(value)
+
 func take_vectors_with_progress(vector_array: Array[Vector2]):
 	var num_points: int = len(vector_array)
 	var max_point_float_to_draw = progress * (num_points - 1)
@@ -290,3 +295,4 @@ func part2(file_path):
 						inside_loop = not inside_loop
 
 	return num_inside_loop
+
