@@ -23,63 +23,102 @@ const maps = [
 var coords_to_char: Dictionary
 var pipe_path: Dictionary
 
+@onready var line: Line2D = %Line
+
+var total_points: int = 0
+var progress: float = 0.0
+var point_vectors: Array[Vector2] = []
+var tween: Tween = null
+
+
+func _on_progress_slider_value_changed(value: float) -> void:
+	progress = value
+
+	var max_point_float_to_draw = progress * (total_points - 1)
+	# print("max point float to draw: %s" % max_point_float_to_draw)
+
+	var last_full_point_index = floor(max_point_float_to_draw)
+	var next_point_index = ceil(max_point_float_to_draw)
+
+	line.points = point_vectors.slice(0, last_full_point_index + 1)
+
+	var tip = point_vectors[last_full_point_index].lerp(
+		point_vectors[next_point_index], max_point_float_to_draw - last_full_point_index
+	)
+	line.add_point(tip)
+
+	line.material.set_shader_parameter("progress", progress)
+
+	line.material.set_shader_parameter("tip", tip)
+
 
 func on_map_change(map_name: String):
+	# for c in self.get_children():
+	# c.queue_free()
+
+	if tween != null:
+		tween.kill()
+
+	point_vectors.clear()
+	line.clear_points()
+
 	var result = part1("res://assets/day-10/%s.txt" % map_name)
 
 	coords_to_char = result[0]
 	pipe_path = result[1]
 
-	queue_redraw()
-
-
-func _ready():
-	%MapSelect.map_changed.connect(on_map_change)
-
-
-#	assert(part1("res://assets/example1.txt")[2] == 4)
-#	assert(part1("res://assets/example2.txt")[2] == 8)
-#	print(part1("res://assets/input.txt")[2])
-#
-#	assert(part2("res://assets/example3.txt") == 4)
-#	assert(part2("res://assets/example4.txt") == 8)
-#	assert(part2("res://assets/example5.txt") == 10)
-#	print(part2("res://assets/input.txt"))
-
-#	var result = part1("res://assets/example2.txt")
-#	coords_to_char = result[0]
-#	pipe_path = result[1]
-
-
-func _draw():
-#	draw_string(SystemFont.new(), Vector2(100, 100), str(pipe_path))
-
-#	if not pipe_path:
-#		return
-
 	var keys = pipe_path.keys()
 
 	var size = get_viewport().get_visible_rect().size
 	var window_size = [size.x, size.y].min()
-#	window_size = window_size[window_size.min_axis_index()]
 
 	var max_map_size = 0
 	for pos in keys:
 		if pos.max() > max_map_size:
 			max_map_size = pos.max()
-#	var max_map_size = keys.max().max()
 
 	var scale_factor = window_size / max_map_size
 
 	print("Scale factor %s" % scale_factor)
 
 	for i in range(len(keys)):
-#		print(i)
-#		print(keys)
-		var j = i + 1 if i < len(keys) - 1 else 0
-		draw_line(
-			Vector2(keys[i][0], keys[i][1]) * scale_factor, Vector2(keys[j][0], keys[j][1]) * scale_factor, Color.AQUA
-		)
+		point_vectors.append(Vector2(keys[i][0], keys[i][1]) * scale_factor)
+	point_vectors.append(Vector2(keys[0][0], keys[0][1]) * scale_factor)
+
+	total_points = len(point_vectors)
+
+	const target_tween_duration = 5.0
+	const max_points_per_second = 360.0
+	var min_tween_duration = total_points / max_points_per_second
+
+	var final_tween_duration = max(target_tween_duration, min_tween_duration)
+
+	print("Final tween duration for %s points: %s" % [total_points, final_tween_duration])
+
+	tween = create_tween()
+	# tween.set_process_mode(tween.TWEEN_PROCESS_IDLE)
+	tween.tween_property(%ProgressSlider, "value", 1.0, final_tween_duration).set_trans(tween.TRANS_SINE)
+	tween.tween_interval(1.0)
+	tween.tween_property(%ProgressSlider, "value", 0.0, final_tween_duration / 2).set_trans(tween.TRANS_SINE)
+	tween.tween_interval(0.5)
+	tween.set_loops()
+
+
+func _ready():
+	%MapSelect.map_changed.connect(on_map_change)
+
+	# assert(part1("res://assets/example1.txt")[2] == 4)
+	# assert(part1("res://assets/example2.txt")[2] == 8)
+	# print(part1("res://assets/input.txt")[2])
+
+	# assert(part2("res://assets/example3.txt") == 4)
+	# assert(part2("res://assets/example4.txt") == 8)
+	# assert(part2("res://assets/example5.txt") == 10)
+	# print(part2("res://assets/input.txt"))
+
+	# var result = part1("res://assets/example2.txt")
+	# coords_to_char = result[0]
+	# pipe_path = result[1]
 
 
 func read_file(file_path):
