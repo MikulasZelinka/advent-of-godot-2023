@@ -24,6 +24,9 @@ var coords_to_char: Dictionary
 var pipe_path: Dictionary
 
 @onready var line: Line2D = %Line
+@onready var line_back: Line2D = %LineBackwards
+@onready var run_in_two_directions_toggle: CheckButton = %RunBothWays
+@onready var result_text: Label = %ResultText
 
 var total_points: int = 0
 var progress: float = 0.0
@@ -31,25 +34,49 @@ var point_vectors: Array[Vector2] = []
 var tween: Tween = null
 
 
-func _on_progress_slider_value_changed(value: float) -> void:
-	progress = value
-
-	var max_point_float_to_draw = progress * (total_points - 1)
+func take_vectors_with_progress(vector_array: Array[Vector2]):
+	var num_points: int = len(vector_array)
+	var max_point_float_to_draw = progress * (num_points - 1)
 	# print("max point float to draw: %s" % max_point_float_to_draw)
 
 	var last_full_point_index = floor(max_point_float_to_draw)
 	var next_point_index = ceil(max_point_float_to_draw)
 
-	line.points = point_vectors.slice(0, last_full_point_index + 1)
+	var points_to_draw = vector_array.slice(0, last_full_point_index + 1)
 
-	var tip = point_vectors[last_full_point_index].lerp(
-		point_vectors[next_point_index], max_point_float_to_draw - last_full_point_index
+	var tip = vector_array[last_full_point_index].lerp(
+		vector_array[next_point_index], max_point_float_to_draw - last_full_point_index
 	)
-	line.add_point(tip)
 
+	points_to_draw.append(tip)
+
+	return points_to_draw
+
+
+func _on_progress_slider_value_changed(value: float) -> void:
+	progress = value
+
+	if run_in_two_directions_toggle.button_pressed:
+		print("sss")
+		var half_points: int = int(total_points / 2)
+		var points_forward = take_vectors_with_progress(point_vectors.slice(0, half_points + 1))
+		var points_backward = take_vectors_with_progress(point_vectors.slice(-1, half_points - 1, -1))
+
+		line.points = points_forward
+		line_back.points = points_backward
+
+	else:
+		line_back.clear_points()
+
+		var points = take_vectors_with_progress(point_vectors)
+		line.points = points
+
+		# var tip = points.back()
+		# line.material.set_shader_parameter("tip", tip)
+
+	result_text.text = "Result: %s" % int(progress * (total_points - 1) / 2)
 	line.material.set_shader_parameter("progress", progress)
-
-	line.material.set_shader_parameter("tip", tip)
+	line_back.material.set_shader_parameter("progress", progress)
 
 
 func on_map_change(map_name: String):
@@ -61,6 +88,7 @@ func on_map_change(map_name: String):
 
 	point_vectors.clear()
 	line.clear_points()
+	line_back.clear_points()
 
 	var result = part1("res://assets/day-10/%s.txt" % map_name)
 
