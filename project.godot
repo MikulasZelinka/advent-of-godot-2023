@@ -19,6 +19,10 @@ config/icon="res://assets/icon.svg"
 
 export/convert_text_resources_to_binary=false
 
+[network]
+
+limits/debugger/max_chars_per_second=1234567
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
