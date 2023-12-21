@@ -6,6 +6,7 @@ var scenes: Dictionary = {
 	"Day 10": preload("res://scenes/day-10/day_10.tscn").instantiate(),
 	"Day 10 - Bezier point": preload("res://scenes/day-10/bezier_point.tscn").instantiate(),
 	"Day 10 - Bezier test": preload("res://scenes/day-10/bezier_test.tscn").instantiate(),
+	"Day 18 (no visualisation yet, see console)": preload("res://scenes/day-18/day_18.tscn").instantiate(),
 	#	"Day 10": "res://day-10/day_10.tscn",
 }
 

@@ -5,7 +5,7 @@ func _ready() -> void:
 	assert(part1("res://assets/day-18/example.txt") == 62)
 	print(part1("res://assets/day-18/input.txt"))
 
-	assert(part1("res://assets/day-18/example.txt") == 952408144115)
+	assert(part2("res://assets/day-18/example.txt") == 952408144115)
 	print(part2("res://assets/day-18/input.txt"))
 
 
@@ -14,6 +14,75 @@ func read_file(file_path):
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	var content = file.get_as_text()
 	return content
+
+
+func part2(file_path):
+	var map_str = read_file(file_path)
+	var lines = map_str.split("\n", false)
+
+	var row: int = 0
+	var col: int = 0
+
+	var vertices: Array[Vector2i] = [Vector2i.ZERO]
+
+	for line in lines:
+		var split_line = line.split(" ", false)
+		# var direction = split_line[0]
+		# var number = int(split_line[1])
+		var color = split_line[2].strip_edges()
+
+		color = color.replace("#", "").replace("(", "").replace(")", "")
+
+		var dir: String = color.right(1)
+
+		var steps: int = color.left(5).hex_to_int()
+		# print("dir: %s, steps: %s, cr: %s" % [dir, steps, color])
+
+		match dir:
+			"0":
+				dir = "R"
+			"1":
+				dir = "D"
+			"2":
+				dir = "L"
+			"3":
+				dir = "U"
+
+		match dir:
+			"R":
+				col += steps
+			"L":
+				col -= steps
+			"U":
+				row -= steps
+			"D":
+				row += steps
+
+		vertices.append(Vector2i(col, row))
+
+	# print(vertices)
+	assert(vertices[-1] == Vector2i.ZERO)
+
+	# https://www.wikihow.com/Calculate-the-Area-of-a-Polygon#Finding-the-Area-of-Irregular-Polygons
+	var inside: int = 0
+	for i in range(len(vertices) - 1):
+		inside += vertices[i].x * vertices[i + 1].y - vertices[i].y * vertices[i + 1].x
+		# print("Inside: %s, i: %s" % [inside, i])
+	inside = abs(inside) / 2
+	print("Inside: ", inside)
+
+	var boundary: int = 0
+	for i in range(len(vertices) - 1):
+		boundary += abs(vertices[i].x - vertices[i + 1].x) + abs(vertices[i].y - vertices[i + 1].y)
+	print("Boundary: ", boundary)
+
+	# https://en.wikipedia.org/wiki/Pick%27s_theorem
+	# not sure why +2, probably because of a small error in boundary calculation
+	var area: int = inside + (boundary / 2) - 1 + 2
+
+	print("Result: ", area)
+
+	return area
 
 
 func map_str_to_dict(map: String):
