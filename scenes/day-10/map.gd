@@ -62,7 +62,6 @@ func _on_progress_slider_value_changed(value: float) -> void:
 	progress = value
 
 	if run_in_two_directions_toggle.button_pressed:
-		print("sss")
 		var half_points: int = int(total_points / 2)
 		var points_forward = take_vectors_with_progress(point_vectors.slice(0, half_points + 1))
 		var points_backward = take_vectors_with_progress(point_vectors.slice(-1, half_points - 1, -1))

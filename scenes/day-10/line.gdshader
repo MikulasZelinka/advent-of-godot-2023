@@ -9,6 +9,12 @@ uniform vec4 color_to : source_color;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
+	//if (VERTEX.y > 540.0) {
+		VERTEX += vec2(sin(TIME * 0.5) * VERTEX.y, 0) * 0.5;
+		
+		// https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/canvas_item_shader.html#built-ins
+		
+	//}
 }
 
 void fragment() {
